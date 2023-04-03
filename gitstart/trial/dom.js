@@ -1,68 +1,86 @@
-var form = document.getElementById('addForm');
-var itemList = document.getElementById('items');
-var filter = document.getElementById('filter');
-
-// Form submit event
-form.addEventListener('submit', addItem);
-// Delete event
-itemList.addEventListener('click', removeItem);
-// Filter event
-filter.addEventListener('keyup', filterItems);
+// Define UI variables
+const form = document.querySelector('#addForm');
+const itemList = document.querySelector('#items');
+const filter = document.querySelector('#filter');
 
 // Add item
-function addItem(e){
+form.addEventListener('submit', addItem);
+
+// Delete item
+itemList.addEventListener('click', removeItem);
+
+// Filter items
+filter.addEventListener('keyup', filterItems);
+
+// Add item to list
+function addItem(e) {
   e.preventDefault();
 
   // Get input value
-  var newItem = document.getElementById('item').value;
+  const newItem = document.querySelector('#item').value;
+  const newDesc = document.querySelector('#desc').value;
 
   // Create new li element
-  var li = document.createElement('li');
-  // Add class
+  const li = document.createElement('li');
   li.className = 'list-group-item';
-  // Add text node with input value
   li.appendChild(document.createTextNode(newItem));
+  
+  // Create new p element
+  const desc = document.createElement('p');
+  desc.appendChild(document.createTextNode(newDesc));
+  desc.className = 'item-desc';
+  li.appendChild(desc);
 
-  // Create del button element
-  var deleteBtn = document.createElement('button');
-  // Add classes to del button
-  deleteBtn.className = 'btn btn-danger btn-sm float-right delete';
-  // Append text node
+  // Create edit button
+  const editBtn = document.createElement('button');
+  editBtn.className = 'btn btn-secondary btn-sm float-right edit';
+  editBtn.appendChild(document.createTextNode('Edit'));
+  li.appendChild(editBtn);
+
+  // Create delete button
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'btn btn-danger btn-sm float-right delete ml-2';
   deleteBtn.appendChild(document.createTextNode('X'));
-
-  // Append buttons to li
   li.appendChild(deleteBtn);
 
-  // Append li to list
+  // Add li to list
   itemList.appendChild(li);
+  
+  // Clear input fields
+  document.querySelector('#item').value = '';
+  document.querySelector('#desc').value = '';
 }
 
-// Remove item
-function removeItem(e){
-  if(e.target.classList.contains('delete')){
-    if(confirm('Are You Sure?')){
-      var li = e.target.parentElement;
+// Remove item from list
+function removeItem(e) {
+  if (e.target.classList.contains('delete')) {
+    if (confirm('Are You Sure?')) {
+      const li = e.target.parentElement;
       itemList.removeChild(li);
     }
   }
 }
 
-// Filter Items
-function filterItems(e){
-  // convert text to lowercase
-  var text = e.target.value.toLowerCase();
+// Filter items
+function filterItems(e) {
+  // Convert text to lowercase
+  const text = e.target.value.toLowerCase();
   // Get lis
-  var items = itemList.getElementsByTagName('li');
-  // Convert to an array
-  Array.from(items).forEach(function(item){
-    var itemName = item.firstChild.textContent;
-    if(itemName.toLowerCase().indexOf(text) != -1){
+  const items = itemList.getElementsByTagName('li');
+  // Convert HTMLCollection to an array
+  Array.from(items).forEach(function(item) {
+    const itemName = item.firstChild.textContent.toLowerCase();
+    const itemDesc = item.querySelector('.item-desc').textContent.toLowerCase();
+    if (itemName.indexOf(text) !== -1 || itemDesc.indexOf(text) !== -1) {
       item.style.display = 'block';
     } else {
       item.style.display = 'none';
     }
   });
 }
+
+
+
 
 
 
