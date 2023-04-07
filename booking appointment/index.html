@@ -33,25 +33,39 @@
 
     <script>
       const form = document.querySelector("#my-form");
-const nameInput = document.querySelector("#name");
-const emailInput = document.querySelector("#email");
+      const nameInput = document.querySelector("#name");
+      const emailInput = document.querySelector("#email");
+      const userList = document.querySelector("#users");
 
-form.addEventListener("submit", function(e) {
-  e.preventDefault();
+      form.addEventListener("submit", function(e) {
+        e.preventDefault();
 
-  const user = {
-    name: nameInput.value,
-    email: emailInput.value
-  };
+        const user = {
+          name: nameInput.value,
+          email: emailInput.value
+        };
 
-  localStorage.setItem("user", JSON.stringify(user));
+        let users = [];
+        if (localStorage.getItem("users")) {
+          users = JSON.parse(localStorage.getItem("users"));
+        }
 
-  nameInput.value = "";
-  emailInput.value = "";
+        users.push(user);
+        localStorage.setItem("users", JSON.stringify(users));
 
-  alert("Details stored in local storage!");
+        nameInput.value = "";
+        emailInput.value = "";
 
+        alert("Details stored in local storage!");
+
+        // Display all users in the list
+        userList.innerHTML = "";
+        users.forEach(function(user) {
+          const li = document.createElement("li");
+          li.appendChild(document.createTextNode(`${user.name} - ${user.email}`));
+          userList.appendChild(li);
+        });
       });
     </script>
   </body>
-</html>  
+</html>
