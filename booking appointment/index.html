@@ -1,73 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>JS For Beginners</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <header>
-      <h1>JS For Beginners</h1>
-    </header>
+<head>
+  <meta charset="UTF-8">
+  <title>JS For Beginners</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>JS For Beginners</h1>
+  </header>
 
-    <section class="container">
-      <form>
-        <h2>Add User</h2>
-        <div>
-          <label for="name">Name:</label>
-          <input type="text" id="name">
-        </div>
-        <div>
-          <label for="email">Email:</label>
-          <input type="text" id="email">
-        </div>
-        <button type="button" onclick="storeData()">Submit</button>
-      </form>
+  <section class="container">
+    <form id="my-form">
+      <h1>Add User</h1>
+      <div class="msg"></div>
+      <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name">
+      </div>
+      <div>
+        <label for="email">Email:</label>
+        <input type="text" id="email">
+      </div>
+      <input class="btn" type="submit" value="Submit">
+    </form>
 
-      <ul id="users"></ul>
-    </section>
+    <ul id="users"></ul>
+  </section>
+    
 
-    <script>
-      const nameInput = document.querySelector("#name");
-      const emailInput = document.querySelector("#email");
-      const userList = document.querySelector("#users");
-      let users = JSON.parse(localStorage.getItem("users") || "[]");
+  <script>
+    const form = document.querySelector("#my-form");
+    const nameInput = document.querySelector("#name");
+    const emailInput = document.querySelector("#email");
+    const userList = document.querySelector("#users");
 
-      function storeData() {
-        const user = {
-          name: nameInput.value,
-          email: emailInput.value
-        };
-        users.push(user);
-        localStorage.setItem("users", JSON.stringify(users));
-        nameInput.value = "";
-        emailInput.value = "";
-        displayUsers();
-        alert("Details stored in local storage!");
+    // Display all users in the list
+    function displayUsers() {
+      let users = [];
+      if (localStorage.getItem("users")) {
+        users = JSON.parse(localStorage.getItem("users"));
       }
 
-      function deleteData(index) {
-        users.splice(index, 1);
-        localStorage.setItem("users", JSON.stringify(users));
-        displayUsers();
-      }
+      userList.innerHTML = "";
+      users.forEach(function(user, index) {
+        const li = document.createElement("li");
+        li.appendChild(document.createTextNode(`${user.name} - ${user.email}`));
 
-      function displayUsers() {
-        userList.innerHTML = "";
-        users.forEach(function(user, index) {
-          const li = document.createElement("li");
-          li.textContent = `${user.name} - ${user.email}`;
-          const deleteBtn = document.createElement("button");
-          deleteBtn.textContent = "Delete";
-          deleteBtn.addEventListener("click", function() {
-            deleteData(index);
-          });
-          li.appendChild(deleteBtn);
-          userList.appendChild(li);
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.innerHTML = "Delete";
+        deleteBtn.addEventListener("click", function() {
+          users.splice(index, 1);
+          localStorage.setItem("users", JSON.stringify(users));
+          displayUsers();
         });
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "edit-btn";
+        editBtn.innerHTML = "Edit";
+        editBtn.addEventListener("click", function() {
+          editUser(index);
+        });
+
+        li.appendChild(deleteBtn);
+        li.appendChild(editBtn);
+
+        userList.appendChild(li);
+      });
+    }
+
+    // Add a new user
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const user = {
+        name: nameInput.value,
+        email: emailInput.value
+      };
+
+      let users = [];
+      if (localStorage.getItem("users")) {
+        users = JSON.parse(localStorage.getItem("users"));
       }
+
+      users.push(user);
+      localStorage.setItem("users", JSON.stringify(users));
+
+      nameInput.value = "";
+      emailInput.value = "";
+
+      alert("Details stored in local storage!");
 
       displayUsers();
-    </script>
-  </body>
+    });
+
+    // Edit an existing user
+    function editUser(index) {
+      const users = JSON.parse(localStorage.getItem("users"));
+      const user = users[index];
+
+      const newName = prompt("Enter new name:", user.name);
+      const newEmail = prompt("Enter new email:", user.email);
+
+      user.name = newName;
+      user.email = newEmail;
+
+      localStorage.setItem("users", JSON.stringify(users));
+
+      displayUsers();
+    }
+
+    displayUsers();
+  </script>
+</body>
 </html>
+
+
+
+
+
